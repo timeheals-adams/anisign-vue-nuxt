@@ -105,8 +105,19 @@ useHead({
     <LayoutHeader />
 
     <!-- Загрузка -->
-    <div v-if="isLoading" class="flex justify-center items-center min-h-[60vh]">
-      <div class="w-10 h-10 border-2 border-[#B3DE51] border-t-transparent rounded-full animate-spin"></div>
+    <div v-if="isLoading" class="px-5">
+      <div class="container pt-[50px]">
+        <div class="flex flex-col lg:flex-row items-start justify-between gap-5 lg:gap-8">
+          <!-- Skeleton for Hero -->
+          <AnimeHeroSkeleton />
+
+          <!-- Divider (desktop only) -->
+          <div class="hidden lg:block bg-white h-[624px] opacity-5 w-px"></div>
+
+          <!-- Skeleton for Info -->
+          <AnimeInfoSkeleton />
+        </div>
+      </div>
     </div>
 
     <!-- Ошибка -->
