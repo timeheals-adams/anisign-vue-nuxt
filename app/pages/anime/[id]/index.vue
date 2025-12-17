@@ -193,6 +193,19 @@ useHead({
           @select-studio="selectedStudioId = $event"
         />
       </div>
+
+      <!-- Divider -->
+      <div v-if="anime.related_anime_ids?.length > 0" class="pt-[70px] container">
+        <div class="bg-[rgba(217,217,217,0.05)] h-px w-full" />
+      </div>
+
+      <!-- Related anime section -->
+      <div v-if="anime.related_anime_ids?.length > 0" class="pt-[70px] container">
+        <AnimeRelated
+          :related-anime-ids="anime.related_anime_ids"
+          :related-anime-texts="anime.related_anime_texts"
+        />
+      </div>
     </div>
 
     <!-- Footer -->

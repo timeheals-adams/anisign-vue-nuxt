@@ -32,6 +32,7 @@ export interface Anime {
   score: number;
   poster_url: string;
   related_anime_ids: string[];
+  related_anime_texts?: string[];
   character_ids: string[];
   createdAt: string;
   updatedAt: string;
