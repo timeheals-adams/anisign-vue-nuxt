@@ -107,16 +107,16 @@ onBeforeUnmount(() => {
           
           <!-- Кнопки входа -->
           <div class="flex gap-2">
-            <div class="px-3 sm:px-5 py-3.5 bg-[#c8c7ca]/0 rounded-xl flex justify-center items-center gap-2.5 overflow-hidden cursor-pointer hover:bg-[#c8c7ca]/10 transition-colors">
+            <NuxtLink to="/auth/login" class="px-3 sm:px-5 py-3.5 bg-[#c8c7ca]/0 rounded-xl flex justify-center items-center gap-2.5 overflow-hidden cursor-pointer hover:bg-[#c8c7ca]/10 transition-colors">
               <div class="text-center justify-center text-[#c8c7ca] text-sm font-semibold  leading-tight">
                 Войти
               </div>
-            </div>
-            <div class="h-[50px] px-3 sm:px-5 py-3.5 bg-[#c8c7ca] rounded-xl flex justify-center items-center gap-2.5 overflow-hidden cursor-pointer hover:bg-[#b3b3b3] transition-colors">
+            </NuxtLink>
+            <NuxtLink to="/auth/login" class="h-[50px] px-3 sm:px-5 py-3.5 bg-[#c8c7ca] rounded-xl flex justify-center items-center gap-2.5 overflow-hidden cursor-pointer hover:bg-[#b3b3b3] transition-colors">
               <div class="text-center justify-center text-[#060606] text-sm font-semibold  leading-tight">
                 Регистрация
               </div>
-            </div>
+            </NuxtLink>
           </div>
         </div>
       </div>
