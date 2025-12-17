@@ -1,6 +1,6 @@
 // API для работы с аниме
 
-const API_BASE = "http://45.153.71.157:8000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://45.153.71.157:8000";
 
 export interface Genre {
   id: string;
