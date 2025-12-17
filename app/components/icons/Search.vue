@@ -1,0 +1,23 @@
+<template>
+  <svg 
+    class="h-4" 
+    viewBox="0 0 16 16" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle 
+      cx="7.33333" 
+      cy="7.33333" 
+      r="5.33333" 
+      stroke="var(--White-70, #C8C7CA)" 
+      stroke-linecap="round" 
+      stroke-linejoin="round"
+    />
+    <path 
+      d="M11 11.3053L14.3333 14.6386" 
+      stroke="var(--White-70, #C8C7CA)" 
+      stroke-linecap="round" 
+      stroke-linejoin="round"
+    />
+  </svg>
+</template>
