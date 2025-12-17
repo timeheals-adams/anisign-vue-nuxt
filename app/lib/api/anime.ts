@@ -1,6 +1,7 @@
 // API для работы с аниме
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://45.153.71.157:8000";
+// Используем /api/ роут для проксирования запросов на сервере
+const API_BASE = "/api";
 
 export interface Genre {
   id: string;
