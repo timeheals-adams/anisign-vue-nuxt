@@ -43,6 +43,29 @@ export interface AnimeListResponse {
   anime_list: Anime[];
 }
 
+// Типы для фильтров
+export type AnimeKind = "cm" | "movie" | "ona" | "ova" | "pv" | "special" | "tv" | "tv_special";
+export type AnimeStatus = "anons" | "ongoing" | "released"; 
+export type AnimeRating = "g" | "none" | "pg" | "pg_13" | "r" | "r_plus";
+export type SortOrder = "asc" | "desc";
+export type SortBy = "score" | "aired_on" | "russian";
+
+export interface AnimeFilters {
+  genre_id?: string[];
+  kind?: AnimeKind;
+  rating?: AnimeRating;
+  status?: AnimeStatus;
+  start_year?: number;
+  end_year?: number;
+  page?: number;
+  limit?: number;
+  sort_by?: SortBy;
+  sort_order?: SortOrder;
+  filter_by_score?: boolean;
+  filter_by_date?: boolean;
+  filter_by_name?: boolean;
+}
+
 /**
  * Получение списка жанров
  */
@@ -58,6 +81,108 @@ export async function fetchGenreList(): Promise<Genre[]> {
 
   if (!response.ok) {
     throw new Error(`Failed to fetch genres: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Получение списка типов аниме (kinds)
+ */
+export async function fetchAnimeKinds(): Promise<AnimeKind[]> {
+  const response = await fetch(
+    `${API_BASE}/anime/kinds`,
+    {
+      headers: {
+        accept: "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch anime kinds: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Получение списка статусов аниме
+ */
+export async function fetchAnimeStatuses(): Promise<AnimeStatus[]> {
+  const response = await fetch(
+    `${API_BASE}/anime/statuses`,
+    {
+      headers: {
+        accept: "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch anime statuses: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Получение списка возрастных рейтингов
+ */
+export async function fetchAnimeRatings(): Promise<AnimeRating[]> {
+  const response = await fetch(
+    `${API_BASE}/anime/ratings`,
+    {
+      headers: {
+        accept: "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch anime ratings: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Получение отфильтрованного списка аниме
+ */
+export async function fetchAnimeListFiltered(
+  filters: AnimeFilters
+): Promise<AnimeListResponse> {
+  const params = new URLSearchParams();
+  
+  // Добавляем genre_id как массив
+  if (filters.genre_id?.length) {
+    filters.genre_id.forEach(id => params.append('genre_id', id));
+  }
+  
+  if (filters.kind) params.set('kind', filters.kind);
+  if (filters.rating) params.set('rating', filters.rating);
+  if (filters.status) params.set('status', filters.status);
+  if (filters.start_year) params.set('start_year', String(filters.start_year));
+  if (filters.end_year) params.set('end_year', String(filters.end_year));
+  if (filters.page) params.set('page', String(filters.page));
+  if (filters.limit) params.set('limit', String(filters.limit));
+  if (filters.sort_by) params.set('sort_by', filters.sort_by);
+  if (filters.sort_order) params.set('sort_order', filters.sort_order);
+  if (filters.filter_by_score !== undefined) params.set('filter_by_score', String(filters.filter_by_score));
+  if (filters.filter_by_date !== undefined) params.set('filter_by_date', String(filters.filter_by_date));
+  if (filters.filter_by_name !== undefined) params.set('filter_by_name', String(filters.filter_by_name));
+
+  const response = await fetch(
+    `${API_BASE}/anime/get-anime-list-filtered?${params.toString()}`,
+    {
+      headers: {
+        accept: "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch filtered anime list: ${response.statusText}`);
   }
 
   return response.json();
@@ -132,16 +257,34 @@ export async function searchAnime(
 /**
  * Маппинг типа аниме на русский
  */
-export function getKindLabel(kind: Anime["kind"]): string {
-  const labels: Record<Anime["kind"], string> = {
+export function getKindLabel(kind: string): string {
+  const labels: Record<string, string> = {
     tv: "ТВ-Сериал",
+    tv_special: "ТВ-Спешл",
     movie: "Фильм",
     ova: "OVA",
     ona: "ONA",
     special: "Спешл",
     music: "Клип",
+    cm: "Реклама",
+    pv: "Промо",
   };
   return labels[kind] || kind;
+}
+
+/**
+ * Маппинг рейтинга на русский с описанием
+ */
+export function getRatingLabelFull(rating: AnimeRating): string {
+  const labels: Record<AnimeRating, string> = {
+    g: "G (0+) — Для всех",
+    pg: "PG (6+) — Детям",
+    pg_13: "PG-13 (13+) — Подросткам",
+    r: "R (16+) — 16+",
+    r_plus: "R+ (18+) — Взрослым",
+    none: "Без рейтинга",
+  };
+  return labels[rating] || rating;
 }
 
 /**

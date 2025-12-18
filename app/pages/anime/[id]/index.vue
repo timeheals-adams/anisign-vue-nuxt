@@ -206,6 +206,16 @@ useHead({
           :related-anime-texts="anime.related_anime_texts"
         />
       </div>
+
+      <!-- Divider -->
+      <div class="pt-[70px] container">
+        <div class="bg-[rgba(217,217,217,0.05)] h-px w-full" />
+      </div>
+
+      <!-- Comments section -->
+      <div class="pt-[70px] container">
+        <AnimeComments :anime-id="animeId" />
+      </div>
     </div>
 
     <!-- Footer -->

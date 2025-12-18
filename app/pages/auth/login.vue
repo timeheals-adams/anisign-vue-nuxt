@@ -35,7 +35,18 @@
     </div>
 
     <!-- Auth form card -->
-    <div class="relative z-10 bg-[#0c0c0c] rounded-[24px] p-6 sm:p-8 lg:p-[50px] w-full min-w-[492px] max-w-[492px] ml-4 sm:ml-6 lg:ml-0 mr-4 sm:mr-6 lg:mr-[175px] overflow-hidden">
+    <Motion
+      :animate="{ 
+        scale: isRegistering ? 1.01 : 1,
+      }"
+      :transition="{ 
+        type: 'spring', 
+        stiffness: 200, 
+        damping: 40,
+        duration: 0.8
+      }"
+      class="relative z-10 bg-[#0c0c0c] rounded-[24px] p-6 sm:p-8 lg:p-[50px] w-full min-w-[492px] max-w-[492px] ml-4 sm:ml-6 lg:ml-0 mr-4 sm:mr-6 lg:mr-[175px] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
+    >
       <div class="relative">
         <AnimatePresence mode="wait">
           <!-- Login Form -->
@@ -60,8 +71,8 @@
               </div>
               <button class="border border-[rgba(255,255,255,0.05)] border-solid rounded-[68px] flex items-center justify-center h-[33px] px-[15px] py-[10px] overflow-clip">
                 <div class="size-[24px] transform rotate-180">
-                  <svg width="15" height="8" viewBox="0 0 15 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14 1L7.5 7L1 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <svg class="size-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 18l6-6-6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </div>
               </button>
@@ -110,7 +121,10 @@
               <!-- Email input -->
               <div class="border border-[rgba(255,255,255,0.05)] border-solid rounded-[14px] h-[65px] flex items-center gap-[9.4px] px-[13.281px] py-[17.708px]">
                 <div class="size-[21.249px] opacity-30">
-                  <img src="http://localhost:3845/assets/3c4365f4ed5bf27bc34dd0f1cb7fd8be350cf2a2.svg" alt="Mail" class="size-full" />
+                  <svg class="size-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </div>
                 <div class="bg-[rgba(200,199,202,0.1)] h-[14px] w-px" />
                 <input
@@ -125,7 +139,11 @@
               <div class="border border-[rgba(255,255,255,0.05)] border-solid rounded-[14px] h-[65px] flex items-center justify-between px-[13.281px] py-[17.708px]">
                 <div class="flex items-center gap-[9.739px]">
                   <div class="size-[21.249px] opacity-30">
-                    <img src="http://localhost:3845/assets/b7b745478dd28049dedb0f62334cb3c7f811566b.svg" alt="Lock" class="size-full" />
+                    <svg class="size-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <circle cx="12" cy="16" r="1" fill="currentColor"/>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                   </div>
                   <div class="bg-[rgba(200,199,202,0.1)] h-[14px] w-px" />
                   <input
@@ -215,8 +233,8 @@
               </div>
               <button @click="toggleToLogin" class="border border-[rgba(255,255,255,0.05)] border-solid rounded-[68px] flex items-center justify-center h-[33px] px-[15px] py-[10px] overflow-clip transition-all duration-300 hover:bg-[rgba(255,255,255,0.05)]">
                 <div class="size-[24px] transform rotate-180">
-                  <svg width="15" height="8" viewBox="0 0 15 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14 1L7.5 7L1 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <svg class="size-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 18l6-6-6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </div>
               </button>
@@ -265,7 +283,10 @@
               <!-- Username input -->
               <div class="border border-[rgba(255,255,255,0.05)] border-solid rounded-[14px] h-[65px] flex items-center gap-[9.4px] px-[13.281px] py-[17.708px]">
                 <div class="size-[21.249px] opacity-30">
-                  <img src="http://localhost:3845/assets/3c4365f4ed5bf27bc34dd0f1cb7fd8be350cf2a2.svg" alt="User" class="size-full" />
+                  <svg class="size-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </div>
                 <div class="bg-[rgba(200,199,202,0.1)] h-[14px] w-px" />
                 <input
@@ -279,7 +300,10 @@
               <!-- Email input -->
               <div class="border border-[rgba(255,255,255,0.05)] border-solid rounded-[14px] h-[65px] flex items-center gap-[9.4px] px-[13.281px] py-[17.708px]">
                 <div class="size-[21.249px] opacity-30">
-                  <img src="http://localhost:3845/assets/3c4365f4ed5bf27bc34dd0f1cb7fd8be350cf2a2.svg" alt="Mail" class="size-full" />
+                  <svg class="size-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </div>
                 <div class="bg-[rgba(200,199,202,0.1)] h-[14px] w-px" />
                 <input
@@ -293,7 +317,11 @@
               <!-- Password input -->
               <div class="border border-[rgba(255,255,255,0.05)] border-solid rounded-[14px] h-[65px] flex items-center gap-[9.4px] px-[13.281px] py-[17.708px]">
                 <div class="size-[21.249px] opacity-30">
-                  <img src="http://localhost:3845/assets/b7b745478dd28049dedb0f62334cb3c7f811566b.svg" alt="Lock" class="size-full" />
+                  <svg class="size-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="16" r="1" fill="currentColor"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </div>
                 <div class="bg-[rgba(200,199,202,0.1)] h-[14px] w-px" />
                 <input
@@ -307,7 +335,11 @@
               <!-- Confirm Password input -->
               <div class="border border-[rgba(255,255,255,0.05)] border-solid rounded-[14px] h-[65px] flex items-center gap-[9.4px] px-[13.281px] py-[17.708px]">
                 <div class="size-[21.249px] opacity-30">
-                  <img src="http://localhost:3845/assets/b7b745478dd28049dedb0f62334cb3c7f811566b.svg" alt="Lock" class="size-full" />
+                  <svg class="size-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="16" r="1" fill="currentColor"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </div>
                 <div class="bg-[rgba(200,199,202,0.1)] h-[14px] w-px" />
                 <input
@@ -367,7 +399,7 @@
           </Motion>
         </AnimatePresence>
       </div>
-    </div>
+    </Motion>
   </div>
 </template>
 

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useAnimeList, useAnimeSearch, MIN_SEARCH_LENGTH } from "~/composables/useAnimeList";
+import { useAnimeFiltered } from "~/composables/useAnimeFiltered";
+import type { AnimeFilters } from "~/lib/api/anime";
 
 const route = useRoute();
 const router = useRouter();
@@ -16,6 +18,30 @@ const inputQuery = ref("");
 
 // Дебаунсированный поисковый запрос (для API)
 const searchQuery = ref("");
+
+// Фильтры для API
+const filters = ref<AnimeFilters>({
+  page: currentPage.value,
+  limit: ITEMS_PER_PAGE,
+  sort_by: 'score',
+  sort_order: 'desc',
+  filter_by_score: true,
+});
+
+// Режим фильтрации (когда есть активные фильтры кроме дефолтных)
+const isFilterMode = computed(() => {
+  const f = filters.value;
+  return !!(
+    f.kind || 
+    f.status || 
+    f.rating || 
+    f.genre_id?.length || 
+    f.start_year || 
+    f.end_year ||
+    f.sort_by !== 'score' ||
+    f.sort_order !== 'desc'
+  );
+});
 
 // Таймер для debounce
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -49,7 +75,7 @@ onUnmounted(() => {
   if (debounceTimer) clearTimeout(debounceTimer);
 });
 
-// Получение данных списка
+// Получение данных списка (без фильтров)
 const { 
   data: listData, 
   isLoading: isListLoading, 
@@ -66,19 +92,57 @@ const {
   isFetching: isSearchFetching
 } = useAnimeSearch(searchQuery);
 
+// Получение отфильтрованных данных
+const { 
+  data: filteredData, 
+  isLoading: isFilteredLoading, 
+  isError: isFilteredError, 
+  error: filteredError,
+  isFetching: isFilteredFetching
+} = useAnimeFiltered(filters);
+
 // Определяем, в режиме поиска мы или нет (минимум 2 символа)
 const isSearchMode = computed(() => searchQuery.value.trim().length >= MIN_SEARCH_LENGTH);
 
-// Объединённые данные
-const data = computed(() => isSearchMode.value ? searchData.value : listData.value);
-const isLoading = computed(() => isSearchMode.value ? isSearchLoading.value : isListLoading.value);
-const isError = computed(() => isSearchMode.value ? isSearchError.value : isListError.value);
-const error = computed(() => isSearchMode.value ? searchError.value : listError.value);
+// Объединённые данные с приоритетом: поиск > фильтры > список
+const data = computed(() => {
+  if (isSearchMode.value) return searchData.value;
+  if (isFilterMode.value) return filteredData.value;
+  return listData.value;
+});
 
-// Общее количество страниц (только для режима списка)
+const isLoading = computed(() => {
+  if (isSearchMode.value) return isSearchLoading.value;
+  if (isFilterMode.value) return isFilteredLoading.value;
+  return isListLoading.value;
+});
+
+const isFetching = computed(() => {
+  if (isSearchMode.value) return isSearchFetching;
+  if (isFilterMode.value) return isFilteredFetching.value;
+  return false;
+});
+
+const isError = computed(() => {
+  if (isSearchMode.value) return isSearchError.value;
+  if (isFilterMode.value) return isFilteredError.value;
+  return isListError.value;
+});
+
+const error = computed(() => {
+  if (isSearchMode.value) return searchError.value;
+  if (isFilterMode.value) return filteredError.value;
+  return listError.value;
+});
+
+// Общее количество страниц
 const totalPages = computed(() => {
-  if (!listData.value || isSearchMode.value) return 1;
-  return Math.ceil(listData.value.total_count / ITEMS_PER_PAGE);
+  if (isSearchMode.value) return 1;
+  
+  const currentData = isFilterMode.value ? filteredData.value : listData.value;
+  if (!currentData) return 1;
+  
+  return Math.ceil(currentData.total_count / ITEMS_PER_PAGE);
 });
 
 // Очистка поиска
@@ -87,6 +151,31 @@ function handleClear() {
   searchQuery.value = "";
   if (debounceTimer) clearTimeout(debounceTimer);
 }
+
+// Обработчик применения фильтров
+function handleApplyFilters(newFilters: AnimeFilters) {
+  filters.value = { ...newFilters, page: 1, limit: ITEMS_PER_PAGE };
+  currentPage.value = 1;
+}
+
+// Обработчик сброса фильтров
+function handleResetFilters() {
+  filters.value = {
+    page: 1,
+    limit: ITEMS_PER_PAGE,
+    sort_by: 'score',
+    sort_order: 'desc',
+    filter_by_score: true,
+  };
+  currentPage.value = 1;
+}
+
+// Синхронизация страницы с фильтрами
+watch(currentPage, (newPage) => {
+  if (isFilterMode.value) {
+    filters.value = { ...filters.value, page: newPage };
+  }
+});
 
 // Навигация по страницам
 function goToPage(page: number) {
@@ -168,11 +257,27 @@ function cancelEllipsis() {
       </p>
     </div>
     <div class="flex justify-between gap-[40px]">
-      <div :class="['w-full flex flex-col gap-[30px]', !isSearchMode ? 'pb-[96px]' : '']">
+      <div :class="['w-full flex flex-col gap-[30px]', !isSearchMode && !isFilterMode ? 'pb-[96px]' : '']">
         <GeneralAnimeListAnimeSearch 
           v-model="inputQuery"
           @clear="handleClear"
         />
+
+        <!-- Индикатор режима фильтрации -->
+        <div v-if="isFilterMode && !isSearchMode && !isLoading" class="flex items-center gap-2">
+          <span class="text-[14px] text-white/70">
+            Результаты фильтрации
+          </span>
+          <span v-if="data" class="text-[12px] text-white/40">
+            (найдено {{ data.total_count }})
+          </span>
+          <button 
+            class="ml-2 text-[12px] text-white/50 hover:text-white/80 underline"
+            @click="handleResetFilters"
+          >
+            Сбросить фильтры
+          </button>
+        </div>
 
         <!-- Индикатор режима поиска -->
         <div v-if="isSearchMode && !isLoading" class="flex items-center gap-2">
@@ -192,7 +297,7 @@ function cancelEllipsis() {
 
         <!-- Загрузка (скелетон) -->
         <GeneralAnimeListSkeleton 
-          v-if="isLoading || isSearchFetching" 
+          v-if="isLoading || isFetching" 
           :count="ITEMS_PER_PAGE" 
         />
 
@@ -201,7 +306,7 @@ function cancelEllipsis() {
           <p>Ошибка загрузки: {{ error?.message }}</p>
           <button 
             class="mt-4 px-4 py-2 bg-[#B3DE51] text-black rounded-lg font-medium"
-            @click="handleClear"
+            @click="handleResetFilters"
           >
             Попробовать снова
           </button>
@@ -219,6 +324,18 @@ function cancelEllipsis() {
           </button>
         </div>
 
+        <!-- Пустой результат фильтрации -->
+        <div v-else-if="isFilterMode && data && data.anime_list.length === 0" class="text-center py-20">
+          <p class="text-white/70 text-[16px] mb-2">По заданным фильтрам ничего не найдено</p>
+          <p class="text-white/40 text-[14px]">Попробуйте изменить параметры фильтрации</p>
+          <button 
+            class="mt-4 px-4 py-2 bg-white/10 text-white/70 hover:bg-white/15 rounded-lg font-medium transition-colors"
+            @click="handleResetFilters"
+          >
+            Сбросить фильтры
+          </button>
+        </div>
+
         <!-- Список аниме -->
         <template v-else-if="data">
           <div class="grid gap-2 lg:gap-[20px] grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6">
@@ -230,7 +347,8 @@ function cancelEllipsis() {
           </div>
 
           <!-- Пагинация (только для режима списка) -->
-          <template v-if="!isSearchMode">
+          <!-- Пагинация (для режима списка и фильтрации) -->
+          <template v-if="!isSearchMode && totalPages > 1">
             <div class="sticky bottom-5 z-30 mt-[50px] flex justify-center">
               <div class="backdrop-blur-[19px] bg-[#0C0C0C]/80 rounded-[14px] px-[17px] py-[11px] flex items-center gap-[10px]">
                 <!-- Назад -->
@@ -311,7 +429,7 @@ function cancelEllipsis() {
 
           <!-- Информация о странице -->
           <p class="text-center text-[12px] text-white/40 mt-3">
-            Страница {{ currentPage }} из {{ totalPages }} • Всего {{ listData?.total_count.toLocaleString('ru-RU') }} аниме
+            Страница {{ currentPage }} из {{ totalPages }} • Всего {{ data?.total_count.toLocaleString('ru-RU') }} аниме
           </p>
           </template>
         </template>
@@ -319,7 +437,11 @@ function cancelEllipsis() {
 
       <!-- Боковая панель с фильтрами -->
       <div class="hidden xl:block">
-        <GeneralAnimeListFilters />
+        <GeneralAnimeListFilters 
+          v-model:filters="filters"
+          @apply="handleApplyFilters"
+          @reset="handleResetFilters"
+        />
       </div>
     </div>
   </div>
