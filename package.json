@@ -20,6 +20,7 @@
     "@pinia/nuxt": "0.11.2",
     "@tanstack/vue-query": "^5.89.0",
     "eslint": "^9.0.0",
+    "motion-v": "^1.7.4",
     "nuxt": "^4.1.2",
     "pinia": "^3.0.3",
     "vue": "^3.5.21",
