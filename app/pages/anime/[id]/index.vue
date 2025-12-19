@@ -82,26 +82,6 @@ const animeInfo = computed(() => {
 
 const screenshots = computed(() => anime.value?.screenshots || []);
 
-const playerTotalEpisodes = computed(() => {
-  if (!anime.value) return 0;
-  if (anime.value.episodes > 0) return anime.value.episodes;
-  if (anime.value.episodesAired > 0) return anime.value.episodesAired;
-  return 0;
-});
-
-// Выбранная озвучка
-const selectedStudioId = ref<string>('1')
-
-// Mock данные для студий озвучки
-const mockStudios = [
-  { id: '1', name: 'Anilibria', logo: 'https://placehold.co/48x48/c40204/white?text=A', isPopular: true },
-  { id: '2', name: 'AniDUB', logo: 'https://placehold.co/48x48/c40204/white?text=A' },
-  { id: '3', name: 'AniLibria.TV', logo: 'https://placehold.co/48x48/c40204/white?text=A', isPopular: true },
-  { id: '4', name: 'AniMedia', logo: 'https://placehold.co/48x48/c40204/white?text=A' },
-  { id: '5', name: 'Crunchyroll', logo: 'https://placehold.co/48x48/c40204/white?text=C', isPopular: true },
-  { id: '6', name: 'Wakanim', logo: 'https://placehold.co/48x48/c40204/white?text=W' },
-]
-
 // Set page meta
 useHead({
   title: computed(() => anime.value 
@@ -125,19 +105,8 @@ useHead({
     <LayoutHeader />
 
     <!-- Загрузка -->
-    <div v-if="isLoading" class="px-5">
-      <div class="container pt-[50px]">
-        <div class="flex flex-col lg:flex-row items-start justify-between gap-5 lg:gap-8">
-          <!-- Skeleton for Hero -->
-          <AnimeHeroSkeleton />
-
-          <!-- Divider (desktop only) -->
-          <div class="hidden lg:block bg-white h-[624px] opacity-5 w-px"></div>
-
-          <!-- Skeleton for Info -->
-          <AnimeInfoSkeleton />
-        </div>
-      </div>
+    <div v-if="isLoading" class="flex justify-center items-center min-h-[60vh]">
+      <div class="w-10 h-10 border-2 border-[#B3DE51] border-t-transparent rounded-full animate-spin"></div>
     </div>
 
     <!-- Ошибка -->
@@ -180,41 +149,6 @@ useHead({
       <!-- Screenshots section -->
       <div v-if="screenshots.length > 0" class="pt-[60px] container">
         <AnimeScreenshots :screenshots="screenshots" />
-      </div>
-
-      <!-- Player section -->
-      <div class="pt-[60px] container">
-        <AnimePlayer 
-          :title="anime.russian || anime.english"
-          :studios="mockStudios"
-          :selected-studio-id="selectedStudioId"
-          :total-episodes="playerTotalEpisodes"
-          :storage-key="`anisign_anime_progress_${animeId}`"
-          @select-studio="selectedStudioId = $event"
-        />
-      </div>
-
-      <!-- Divider -->
-      <div v-if="anime.related_anime_ids?.length > 0" class="pt-[70px] container">
-        <div class="bg-[rgba(217,217,217,0.05)] h-px w-full" />
-      </div>
-
-      <!-- Related anime section -->
-      <div v-if="anime.related_anime_ids?.length > 0" class="pt-[70px] container">
-        <AnimeRelated
-          :related-anime-ids="anime.related_anime_ids"
-          :related-anime-texts="anime.related_anime_texts"
-        />
-      </div>
-
-      <!-- Divider -->
-      <div class="pt-[70px] container">
-        <div class="bg-[rgba(217,217,217,0.05)] h-px w-full" />
-      </div>
-
-      <!-- Comments section -->
-      <div class="pt-[70px] container">
-        <AnimeComments :anime-id="animeId" />
       </div>
     </div>
 

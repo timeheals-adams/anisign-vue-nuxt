@@ -6,6 +6,7 @@ export default defineNuxtConfig({
   "modules": [
     "@nuxt/eslint",
     "@nuxt/image",
+    "@nuxt/test-utils",
     "@nuxt/icon",
     "@nuxt/fonts",
     "@unocss/nuxt",
