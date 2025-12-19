@@ -1,6 +1,6 @@
 // API для работы с аниме
-
-const API_BASE = "http://45.153.71.157:8000";
+// Используем серверный прокси для избежания CORS и Mixed Content проблем
+const API_BASE = "/api";
 
 export interface Genre {
   id: string;
